@@ -37,6 +37,7 @@ public class SocialMediaController {
 
         app.get("example-endpoint", this::exampleHandler);
         app.post("/register", this::addAccountHandler);
+        app.post("/login", this::loginAccountHandler);
         
         return app;
     }
@@ -68,6 +69,28 @@ public class SocialMediaController {
             context.json(registeredAccount);
         } catch (InvalidNewAccountInputException | AccountAlreadyExistsException e) {
             context.status(400);
+        } catch (SQLException e) {
+            context.status(500);
+        }
+    }
+
+    /**
+     * Attempts to log in a user by looking up an account record in the database.
+     * The correct account with ID is returned thru the API.
+     * If the password is incorrect or if the account does not exist, a HTTP response code of 401 is returned.
+     * If there is an issue interacting with the database, a HTTP response code of 500 is returned to the client.
+     * 
+     * @param context Contains an account in JSON that has username and password only.
+     */
+    private void loginAccountHandler(Context context) {
+        Account account = context.bodyAsClass(Account.class);
+
+        try {
+            Account registeredAccount = SOCIAL_MEDIA_SERVICE.loginAccount(account);
+            context.status(200);
+            context.json(registeredAccount);
+        } catch (IllegalArgumentException e) {
+            context.status(401);
         } catch (SQLException e) {
             context.status(500);
         }

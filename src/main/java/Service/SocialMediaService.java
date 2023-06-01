@@ -1,6 +1,7 @@
 package Service;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,36 @@ public class SocialMediaService {
         }
 
         return accountDao.addAccount(account);
+    }
+
+    /**
+     * Logs in a user by looking up an account stored in the database and comparing if the username and password
+     *  matches.  If there's a match, then return an Account object that includes the ID as well.
+     * If an account does not exist under the provided username or if the provided password does not match the one
+     *  stored in the database, an Exception is thrown.
+     * 
+     * @param account Contains the inputted username and password of a supposedly existing account.
+     * @return The found Account containing the ID, along with username and password.
+     * @throws IllegalArgumentException If an account with the provided username does not exist or if the provided
+     *  password does not match the stored password.
+     * @throws SQLException If there is an issue with the database.
+     */
+    public Account loginAccount(Account account)
+     throws IllegalArgumentException, SQLException {
+        LOGGER.info("Social media service is logging into an account: {}", account);
+
+        Optional<Account> retrievedAccount = accountDao.getAccount(account.getUsername());
+        LOGGER.debug("Retrieved account: {}", retrievedAccount);
+
+        if (retrievedAccount.isPresent() && retrievedAccount.get().getPassword().equals(account.getPassword())) {
+            return retrievedAccount.get();
+        }
+
+        LOGGER.error("Username and/or password is incorrect for log in: {}", account);
+        throw new IllegalArgumentException(
+            String.format(
+                "Can not log into account.  Username or password is incorrect.  %s",
+                 account));
     }
 
 }
