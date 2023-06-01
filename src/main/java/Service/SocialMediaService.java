@@ -41,8 +41,7 @@ public class SocialMediaService {
             LOGGER.error("New account username or password is not acceptable: {}", account);
             throw new InvalidNewAccountInputException(
                 String.format(
-                    "Can not create a new account.  " +
-                     "Username or password is not acceptable for account: %s",
+                    "Can not create a new account.  Username or password is not acceptable for account: %s",
                      account));
         }
 
@@ -50,8 +49,7 @@ public class SocialMediaService {
             LOGGER.error("Account already exists for username: {}", account.getUsername());
             throw new AccountAlreadyExistsException(
                 String.format(
-                    "Can not create a new account.  " +
-                     "Account with username '%s' already exists.",
+                    "Can not create a new account.  Account with username '%s' already exists.",
                      account.getUsername()));
         }
 
