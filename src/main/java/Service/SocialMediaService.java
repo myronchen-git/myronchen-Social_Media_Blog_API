@@ -76,15 +76,18 @@ public class SocialMediaService {
         Optional<Account> retrievedAccount = accountDao.getAccount(account.getUsername());
         LOGGER.debug("Retrieved account: {}", retrievedAccount);
 
-        if (retrievedAccount.isPresent() && retrievedAccount.get().getPassword().equals(account.getPassword())) {
-            return retrievedAccount.get();
-        }
-
-        LOGGER.error("Username and/or password is incorrect for log in: {}", account);
-        throw new IllegalArgumentException(
-            String.format(
-                "Can not log into account.  Username or password is incorrect.  %s",
-                 account));
+        return retrievedAccount
+            .filter(
+                (acc) -> acc.getPassword().equals(account.getPassword())
+            ).orElseThrow(
+                () -> {
+                    LOGGER.error("Username and/or password is incorrect for log in: {}", account);
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "Can not log into account.  Username or password is incorrect.  %s",
+                             account));
+                }
+            );
     }
 
 }
