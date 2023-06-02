@@ -101,4 +101,43 @@ public class AccountDaoH2 implements AccountDao {
 
         return Optional.empty();
     }
+
+    /**
+     * Retrieves an account from the H2 database by using ID.
+     * 
+     * @param id The ID to use to look up an account in the database.
+     * @return An Optional containing an Account object or an empty Optional if there is no account with the provided
+     *  ID in the database.
+     * @throws SQLException If there is an issue with the database.
+     */
+    @Override
+    public Optional<Account> getAccount(int id) throws SQLException {
+        LOGGER.info("Retrieving an account from database with account ID: {}", id);
+
+        String sql = "SELECT * FROM account WHERE account_id = ?";
+
+        try {
+            PreparedStatement preparedStatement =
+             connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                int retrievedAccountId = resultSet.getInt("account_id");
+                String retrievedUsername = resultSet.getString("username");
+                String retrievedPassword = resultSet.getString("password");
+
+                return Optional.of(
+                    new Account(retrievedAccountId, retrievedUsername, retrievedPassword));
+            }
+
+        } catch (SQLException e) {
+            LOGGER.error("Database error when getting account for ID: {}", id);
+            throw e;
+        }
+
+        return Optional.empty();
+    }
+
 }

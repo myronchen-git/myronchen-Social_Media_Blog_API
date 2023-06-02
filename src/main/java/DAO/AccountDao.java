@@ -8,4 +8,5 @@ import Model.Account;
 public interface AccountDao {
     Account addAccount(Account account) throws SQLException;
     Optional<Account> getAccount(String username) throws SQLException;
+    Optional<Account> getAccount(int id) throws SQLException;
 }

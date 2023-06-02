@@ -6,9 +6,13 @@ import io.javalin.http.Context;
 import java.sql.SQLException;
 
 import DAO.AccountDaoH2;
+import DAO.MessageDaoH2;
 import Exception.AccountAlreadyExistsException;
+import Exception.AccountDoesNotExistException;
+import Exception.InvalidMessageTextException;
 import Exception.InvalidNewAccountInputException;
 import Model.Account;
+import Model.Message;
 import Service.SocialMediaService;
 import Util.ConnectionUtil;
 
@@ -22,7 +26,8 @@ public class SocialMediaController {
 
     private static final SocialMediaService SOCIAL_MEDIA_SERVICE = 
     new SocialMediaService(
-        new AccountDaoH2(ConnectionUtil.getConnection()));
+        new AccountDaoH2(ConnectionUtil.getConnection()), 
+        new MessageDaoH2(ConnectionUtil.getConnection()));
 
     /**
      * In order for the test cases to work, you will need to write the endpoints 
@@ -38,6 +43,7 @@ public class SocialMediaController {
         app.get("example-endpoint", this::exampleHandler);
         app.post("/register", this::addAccountHandler);
         app.post("/login", this::loginAccountHandler);
+        app.post("/messages", this::createMessageHandler);
         
         return app;
     }
@@ -96,4 +102,25 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * Adds a message that contains poster ID, message text, and time of posting to the message database table.
+     * A message with a message ID is returned thru the API.
+     * If the message text is empty or is too long, or if the poster does not have an account, then a HTTP response code
+     *  of 400 is returned.
+     * 
+     * @param context Contains a Message object in JSON, only without a message ID.
+     */
+    private void createMessageHandler(Context context) {
+        Message message = context.bodyAsClass(Message.class);
+
+        try {
+            Message submittedMessage = SOCIAL_MEDIA_SERVICE.createMessage(message);
+            context.status(200);
+            context.json(submittedMessage);
+        } catch (InvalidMessageTextException | AccountDoesNotExistException e) {
+            context.status(400);
+        } catch (SQLException e) {
+            context.status(500);
+        }
+    }
 }

@@ -7,17 +7,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import DAO.AccountDao;
+import DAO.MessageDao;
 import Exception.AccountAlreadyExistsException;
+import Exception.AccountDoesNotExistException;
+import Exception.InvalidMessageTextException;
 import Exception.InvalidNewAccountInputException;
 import Model.Account;
+import Model.Message;
 
 public class SocialMediaService {
     
     private AccountDao accountDao;
+    private MessageDao messageDao;
     private static final Logger LOGGER = LoggerFactory.getLogger(SocialMediaService.class);
 
-    public SocialMediaService(AccountDao accountDao) {
+    public SocialMediaService(AccountDao accountDao, MessageDao messageDao) {
         this.accountDao = accountDao;
+        this.messageDao = messageDao;
     }
 
     /**
@@ -88,6 +94,42 @@ public class SocialMediaService {
                              account));
                 }
             );
+    }
+
+    /**
+     * Creates/posts a new message by adding it to the database.  Throws an exception if the message text is empty or
+     *  not less than 255 characters, or if the poster does not have an account in the database.
+     * A Message is returned with a generated ID from the database, along with the same provided fields.
+     * 
+     * @param message Contains poster ID, message text, and time of posting.
+     * @return A Message object with the message ID, poster ID, message text, and time of posting of the newly added
+     *  message.
+     * @throws InvalidMessageTextException If the new message's text is not acceptable.
+     * @throws AccountDoesNotExistException If an account with the provided poster ID does not exist.
+     * @throws SQLException If there is an issue with the database.
+     */
+    public Message createMessage(Message message)
+     throws InvalidMessageTextException, AccountDoesNotExistException, SQLException {
+        LOGGER.info("Social media service is creating a new message: {}", message);
+
+        if (message.getMessage_text().isEmpty()
+         || message.getMessage_text().length() >= 255) {
+            LOGGER.error("Message text is empty or too long: {}", message);
+            throw new InvalidMessageTextException(
+                String.format(
+                    "Can not create a new message.  Message text is empty or too long: %s",
+                     message));
+        }
+
+        if(!accountDao.getAccount(message.getPosted_by()).isPresent()) {
+            LOGGER.error("Account does not exist for account ID: {}", message.getPosted_by());
+            throw new AccountDoesNotExistException(
+                String.format(
+                    "Can not create a new message.  Account with ID '%s' does not exist.",
+                    message.getPosted_by()));
+        }
+
+        return messageDao.addMessage(message);
     }
 
 }
