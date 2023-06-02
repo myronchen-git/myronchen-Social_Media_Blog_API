@@ -149,7 +149,7 @@ public class MessageDaoH2 implements MessageDao {
             }
 
         } catch (SQLException e) {
-            LOGGER.error("Database error when getting account for ID: {}", id);
+            LOGGER.error("Database error when getting message for ID: {}", id);
             throw e;
         }
 
@@ -161,7 +161,7 @@ public class MessageDaoH2 implements MessageDao {
     public void deleteMessage(int id) throws SQLException {
         LOGGER.info("Deleting message from database with ID: {}", id);
 
-        String sql = "DELETE FROM message where message_id = ?";
+        String sql = "DELETE FROM message where message_id = ?;";
 
         try {
             PreparedStatement preparedStatement =

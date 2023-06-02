@@ -63,7 +63,7 @@ public class AccountDaoH2 implements AccountDao {
     public Optional<Account> getAccount(String username) throws SQLException {
         LOGGER.info("Retrieving an account from database with username: {}", username);
 
-        String sql = "SELECT * FROM account WHERE username = ?";
+        String sql = "SELECT * FROM account WHERE username = ?;";
 
         try {
             PreparedStatement preparedStatement =
@@ -94,7 +94,7 @@ public class AccountDaoH2 implements AccountDao {
     public Optional<Account> getAccount(int id) throws SQLException {
         LOGGER.info("Retrieving an account from database with account ID: {}", id);
 
-        String sql = "SELECT * FROM account WHERE account_id = ?";
+        String sql = "SELECT * FROM account WHERE account_id = ?;";
 
         try {
             PreparedStatement preparedStatement =

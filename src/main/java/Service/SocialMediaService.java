@@ -128,7 +128,7 @@ public class SocialMediaService {
             throw new AccountDoesNotExistException(
                 String.format(
                     "Can not create a new message.  Account with ID '%s' does not exist.",
-                    message.getPosted_by()));
+                     message.getPosted_by()));
         }
 
         return messageDao.addMessage(message);
@@ -166,7 +166,7 @@ public class SocialMediaService {
      * Gets a message from the database by using message ID.  If the message does not exist, return an empty Optional.
      * 
      * @param id The message ID of the message to retrieve.
-     * @return A Message object with ID, poster ID, message text, and time of posting.
+     * @return An Optional containing the Message object with ID, poster ID, message text, and time of posting.
      * @throws SQLException If there is an issue with the database.
      */
     public Optional<Message> getMessage(int id) throws SQLException {

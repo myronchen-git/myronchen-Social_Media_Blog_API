@@ -38,11 +38,11 @@ public class SocialMediaController {
         app.post("/login", this::loginAccountHandler);
         app.post("/messages", this::createMessageHandler);
         app.get("/messages", this::getAllMessagesHandler);
-        app.get("/messages/{message_id}", this::getMessageById);
-        app.delete("/messages/{message_id}", this::deleteMessageById);
+        app.get("/messages/{message_id}", this::getMessageByIdHandler);
+        app.delete("/messages/{message_id}", this::deleteMessageByIdHandler);
         app.patch("/messages/{message_id}", this::patchMessageByIdHandler);
         app.get("/accounts/{account_id}/messages", this::getAllMessagesFromUserHandler);
-        
+
         return app;
     }
 
@@ -161,7 +161,7 @@ public class SocialMediaController {
      * 
      * @param context Contains an ID from the URL path parameter.  Sends back a Message object in JSON.
      */
-    private void getMessageById(Context context) {
+    private void getMessageByIdHandler(Context context) {
         int id = Integer.parseInt(
             context.pathParam("message_id"));
 
@@ -183,7 +183,7 @@ public class SocialMediaController {
      * 
      * @param context Contains an ID from the URL path parameter.  Sends back the deleted Message in JSON.
      */
-    private void deleteMessageById(Context context) {
+    private void deleteMessageByIdHandler(Context context) {
         int id = Integer.parseInt(
             context.pathParam("message_id"));
 
