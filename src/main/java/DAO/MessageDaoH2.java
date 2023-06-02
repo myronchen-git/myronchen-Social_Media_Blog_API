@@ -14,7 +14,7 @@ import Model.Message;
 public class MessageDaoH2 implements MessageDao {
 
     private final Connection connection;
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountDaoH2.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageDaoH2.class);
 
     public MessageDaoH2(Connection connection) {
         this.connection = connection;
