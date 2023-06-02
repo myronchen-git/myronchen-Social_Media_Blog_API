@@ -33,4 +33,12 @@ public interface MessageDao {
      * @throws SQLException If there is an issue with the database.
      */
     Optional<Message> getMessage(int id) throws SQLException;
+
+    /**
+     * Deletes a message from a database by using message ID.  If the message doesn't exist, nothing happens.
+     * 
+     * @param id The message ID of the message to delete.
+     * @throws SQLException If there is an issue with the database.
+     */
+    void deleteMessage(int id) throws SQLException;
 }

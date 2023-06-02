@@ -122,4 +122,25 @@ public class MessageDaoH2 implements MessageDao {
         return Optional.empty();
     }
 
+
+    @Override
+    public void deleteMessage(int id) throws SQLException {
+        LOGGER.info("Deleting message from database with ID: {}", id);
+
+        String sql = "DELETE FROM message where message_id = ?";
+
+        try {
+            PreparedStatement preparedStatement =
+             connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+
+            int numMessagesDeleted = preparedStatement.executeUpdate();
+            LOGGER.debug("Number of messages deleted from database: {}", numMessagesDeleted);
+
+        } catch (SQLException e) {
+            LOGGER.error("Database error when deleting message for ID: {}", id);
+            throw e;
+        }
+    }
+
 }

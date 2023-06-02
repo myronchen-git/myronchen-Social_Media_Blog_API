@@ -159,4 +159,25 @@ public class SocialMediaService {
         return messageDao.getMessage(id);
     }
 
+    /**
+     * Gets the message corresponding to the provided ID from the database, deletes the message, and returns an Optional
+     *  containing the message.
+     * If the message does not exist, the delete operation in the database is not performed, and an empty Optional is
+     *  returned.
+     * 
+     * @param id The message ID of the message to delete.
+     * @return An Optional containing the Message object/record that was deleted.
+     * @throws SQLException If there is an issue with the database.
+     */
+    public Optional<Message> deleteMessage(int id) throws SQLException {
+        LOGGER.info("Social media service is deleting message with ID: {}", id);
+
+        Optional<Message> retrievedMessage = messageDao.getMessage(id);
+
+        if (retrievedMessage.isPresent()) {
+            messageDao.deleteMessage(id);
+        }
+
+        return retrievedMessage;
+    }
 }

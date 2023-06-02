@@ -38,6 +38,7 @@ public class SocialMediaController {
         app.post("/messages", this::createMessageHandler);
         app.get("/messages", this::getAllMessagesHandler);
         app.get("/messages/{message_id}", this::getMessageById);
+        app.delete("/messages/{message_id}", this::deleteMessageById);
         
         return app;
     }
@@ -144,6 +145,28 @@ public class SocialMediaController {
             SOCIAL_MEDIA_SERVICE.getMessage(id)
                 .ifPresent(
                     (retrievedMessage) -> context.json(retrievedMessage));
+            context.status(200);
+        } catch (SQLException e) {
+            context.status(500);
+        }
+    }
+
+    /**
+     * Deletes a message from the database by using the message ID provided in the URL, which is stored inside the
+     *  context.
+     * Returns the deleted Message in JSON, with ID, poster ID, message text, and time of posting, thru the context.
+     * If the message does not exist, an empty response body is returned to the client.
+     * 
+     * @param context Contains an ID from the URL path parameter.  Sends back the deleted Message in JSON.
+     */
+    private void deleteMessageById(Context context) {
+        int id = Integer.parseInt(
+            context.pathParam("message_id"));
+
+        try {
+            SOCIAL_MEDIA_SERVICE.deleteMessage(id)
+                .ifPresent(
+                    (deletedMessage) -> context.json(deletedMessage));
             context.status(200);
         } catch (SQLException e) {
             context.status(500);
