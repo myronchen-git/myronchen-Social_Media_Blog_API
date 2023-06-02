@@ -146,4 +146,17 @@ public class SocialMediaService {
         return messageDao.getAllMessages();
     }
 
+    /**
+     * Gets a message from the database by using message ID.  If the message does not exist, return an empty Optional.
+     * 
+     * @param id The message ID of the message to retrieve.
+     * @return A Message object with ID, poster ID, message text, and time of posting.
+     * @throws SQLException If there is an issue with the database.
+     */
+    public Optional<Message> getMessage(int id) throws SQLException {
+        LOGGER.info("Social media service is getting message with ID: {}", id);
+
+        return messageDao.getMessage(id);
+    }
+
 }

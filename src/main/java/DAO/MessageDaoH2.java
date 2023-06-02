@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ public class MessageDaoH2 implements MessageDao {
     public MessageDaoH2(Connection connection) {
         this.connection = connection;
     }
+
 
     @Override
     public Message addMessage(Message message) throws SQLException {
@@ -59,6 +61,7 @@ public class MessageDaoH2 implements MessageDao {
         }
     }
 
+
     @Override
     public List<Message> getAllMessages() throws SQLException {
         LOGGER.info("Getting all messages from database");
@@ -86,6 +89,37 @@ public class MessageDaoH2 implements MessageDao {
         }
 
         return messages;
+    }
+
+
+    @Override
+    public Optional<Message> getMessage(int id) throws SQLException {
+        LOGGER.info("Getting message from database with ID: {}", id);
+
+        String sql = "SELECT * FROM message WHERE message_id = ?;";
+
+        try {
+            PreparedStatement preparedStatement =
+             connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return Optional.of(
+                    new Message(
+                        resultSet.getInt("message_id"), 
+                        resultSet.getInt("posted_by"), 
+                        resultSet.getString("message_text"),
+                        resultSet.getLong("time_posted_epoch")));
+            }
+
+        } catch (SQLException e) {
+            LOGGER.error("Database error when getting account for ID: {}", id);
+            throw e;
+        }
+
+        return Optional.empty();
     }
 
 }

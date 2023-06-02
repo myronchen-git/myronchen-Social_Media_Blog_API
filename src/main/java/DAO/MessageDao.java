@@ -2,6 +2,7 @@ package DAO;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 import Model.Message;
 
@@ -23,4 +24,13 @@ public interface MessageDao {
      * @throws SQLException If there is an issue with the database.
      */
     List<Message> getAllMessages() throws SQLException;
+
+    /**
+     * Gets a message from a database by using message ID.  If the message does not exist, return an empty Optional.
+     * 
+     * @param id The message ID of the message to retrieve.
+     * @return A Message object with ID, poster ID, message text, and time of posting.
+     * @throws SQLException If there is an issue with the database.
+     */
+    Optional<Message> getMessage(int id) throws SQLException;
 }
