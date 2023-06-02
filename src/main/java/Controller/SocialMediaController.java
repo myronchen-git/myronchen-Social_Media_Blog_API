@@ -4,6 +4,7 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import DAO.AccountDaoH2;
 import DAO.MessageDaoH2;
@@ -44,6 +45,7 @@ public class SocialMediaController {
         app.post("/register", this::addAccountHandler);
         app.post("/login", this::loginAccountHandler);
         app.post("/messages", this::createMessageHandler);
+        app.get("/messages", this::getAllMessagesHandler);
         
         return app;
     }
@@ -123,4 +125,22 @@ public class SocialMediaController {
             context.status(500);
         }
     }
+
+    /**
+     * Gets all messages stored in the database.
+     * Returns messages thru the context.
+     * If there are no messages, then the list of retrieved messages from the database will be empty.
+     * 
+     * @param context Does not contain anything from the client, but will contain messages, if any, from the database.
+     */
+    private void getAllMessagesHandler(Context context) {
+        try {
+            List<Message> retrievedMessages = SOCIAL_MEDIA_SERVICE.getAllMessages();
+            context.status(200);
+            context.json(retrievedMessages);
+        } catch (SQLException e) {
+            context.status(500);
+        }
+    }
+
 }

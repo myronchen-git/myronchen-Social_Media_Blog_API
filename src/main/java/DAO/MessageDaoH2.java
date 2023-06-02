@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +57,35 @@ public class MessageDaoH2 implements MessageDao {
             LOGGER.error("Database error when adding message: {}", message);
             throw e;
         }
+    }
+
+    @Override
+    public List<Message> getAllMessages() throws SQLException {
+        LOGGER.info("Getting all messages from database");
+
+        List<Message> messages = new ArrayList<>();
+
+        String sql = "SELECT * FROM message;";
+
+        try {
+            ResultSet resultSet = connection.createStatement().executeQuery(sql);
+
+            while (resultSet.next()) {
+                messages.add(
+                    new Message(
+                        resultSet.getInt("message_id"),
+                        resultSet.getInt("posted_by"),
+                        resultSet.getString("message_text"),
+                        resultSet.getLong("time_posted_epoch"))
+                );
+            }
+
+        } catch (SQLException e) {
+            LOGGER.error("Database error when getting all messages.");
+            throw e;
+        }
+
+        return messages;
     }
 
 }

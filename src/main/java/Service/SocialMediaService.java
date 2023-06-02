@@ -1,6 +1,7 @@
 package Service;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -130,6 +131,19 @@ public class SocialMediaService {
         }
 
         return messageDao.addMessage(message);
+    }
+
+    /**
+     * Gets all messages that exist in the database.
+     * Returns a list of messages.  If there are no messages, then the list is empty.
+     * 
+     * @return List containing Messages that exist in the database.
+     * @throws SQLException If there is an issue with the database.
+     */
+    public List<Message> getAllMessages() throws SQLException {
+        LOGGER.info("Social media service is getting all messages.");
+
+        return messageDao.getAllMessages();
     }
 
 }

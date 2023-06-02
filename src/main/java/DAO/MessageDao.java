@@ -1,6 +1,7 @@
 package DAO;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import Model.Message;
 
@@ -14,4 +15,12 @@ public interface MessageDao {
      * @throws SQLException If there is an issue with the database.
      */
     Message addMessage(Message message) throws SQLException;
+
+    /**
+     * Gets all messages from a database.  If there are no messages, then the list is empty.
+     * 
+     * @return List containing Messages that exist in the database.
+     * @throws SQLException If there is an issue with the database.
+     */
+    List<Message> getAllMessages() throws SQLException;
 }
