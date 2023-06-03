@@ -93,6 +93,40 @@ public class MessageDaoH2 implements MessageDao {
 
 
     @Override
+    public List<Message> getAllMessages(int accountId) throws SQLException {
+        LOGGER.info("Getting all messages from user with account ID: {}", accountId);
+
+        List<Message> messages = new ArrayList<>();
+
+        String sql = "SELECT * FROM message WHERE posted_by = ?;";
+
+        try {
+            PreparedStatement preparedStatement =
+             connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                messages.add(
+                    new Message(
+                        resultSet.getInt("message_id"),
+                        resultSet.getInt("posted_by"),
+                        resultSet.getString("message_text"),
+                        resultSet.getLong("time_posted_epoch"))
+                );
+            }
+
+        } catch (SQLException e) {
+            LOGGER.error("Database error when getting all messages from user with account ID: {}", accountId);
+            throw e;
+        }
+
+        return messages;
+    }
+
+
+    @Override
     public Optional<Message> getMessage(int id) throws SQLException {
         LOGGER.info("Getting message from database with ID: {}", id);
 

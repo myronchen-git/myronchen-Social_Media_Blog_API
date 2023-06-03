@@ -41,6 +41,7 @@ public class SocialMediaController {
         app.get("/messages/{message_id}", this::getMessageById);
         app.delete("/messages/{message_id}", this::deleteMessageById);
         app.patch("/messages/{message_id}", this::patchMessageByIdHandler);
+        app.get("/accounts/{account_id}/messages", this::getAllMessagesFromUserHandler);
         
         return app;
     }
@@ -133,6 +134,27 @@ public class SocialMediaController {
     }
 
     /**
+     * Gets all messages in the database that belong to a particular user.  The account ID is provided in the URL and
+     *  stored in the context.
+     * Returns a list of messages thru the context.
+     * If there are no messages or if the account doesn't exist, then the returned list will be empty.
+     * 
+     * @param context Contains the account ID of the user of the messages to retrieve.
+     */
+    private void getAllMessagesFromUserHandler(Context context) {
+        int accountId = Integer.parseInt(
+            context.pathParam("account_id"));
+
+        try {
+            List<Message> retrievedMessages = SOCIAL_MEDIA_SERVICE.getAllMessages(accountId);
+            context.status(200);
+            context.json(retrievedMessages);
+        } catch (SQLException e) {
+            context.status(500);
+        }
+    }
+
+    /**
      * Gets a message from the database by using the message ID provided in the URL, which is stored inside the context.
      * Returns a Message object in JSON, with ID, poster ID, message text, and time of posting, thru the context.
      * If the message does not exist, an empty response body is returned to the client.
@@ -200,5 +222,5 @@ public class SocialMediaController {
             context.status(500);
         }
     }
-    
+
 }

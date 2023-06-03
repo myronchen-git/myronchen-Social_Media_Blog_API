@@ -26,6 +26,16 @@ public interface MessageDao {
     List<Message> getAllMessages() throws SQLException;
 
     /**
+     * Gets all messages from a database that belong to a particular user.
+     * If there are no messages or if the account doesn't exist, then the returned list will be empty.
+     * 
+     * @param accountId The account ID of the user of the messages to retrieve.
+     * @return List containing Messages from a particular user.
+     * @throws SQLException If there is an issue with the database.
+     */
+    List<Message> getAllMessages(int accountId) throws SQLException;
+
+    /**
      * Gets a message from a database by using message ID.  If the message does not exist, return an empty Optional.
      * 
      * @param id The message ID of the message to retrieve.

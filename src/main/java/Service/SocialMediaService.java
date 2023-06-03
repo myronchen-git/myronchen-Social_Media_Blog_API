@@ -148,6 +148,21 @@ public class SocialMediaService {
     }
 
     /**
+     * Gets all messages in the database that belong to a particular user.
+     * Returns a list of messages.
+     * If there are no messages or if the account doesn't exist, then the returned list will be empty.
+     * 
+     * @param accountId The account ID of the user of the messages to retrieve.
+     * @return List containing Messages from a particular user.
+     * @throws SQLException If there is an issue with the database.
+     */
+    public List<Message> getAllMessages(int accountId) throws SQLException {
+        LOGGER.info("Social media service is getting all messages from user with account ID: {}", accountId);
+
+        return messageDao.getAllMessages(accountId);
+    }
+
+    /**
      * Gets a message from the database by using message ID.  If the message does not exist, return an empty Optional.
      * 
      * @param id The message ID of the message to retrieve.
