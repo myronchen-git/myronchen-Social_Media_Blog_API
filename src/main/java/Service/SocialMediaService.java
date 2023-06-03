@@ -90,7 +90,7 @@ public class SocialMediaService {
             ).orElseThrow(
                 () -> {
                     LOGGER.error("Username and/or password is incorrect for log in: {}", account);
-                    throw new IllegalArgumentException(
+                    return new IllegalArgumentException(
                         String.format(
                             "Can not log into account.  Username or password is incorrect.  %s",
                              account));
