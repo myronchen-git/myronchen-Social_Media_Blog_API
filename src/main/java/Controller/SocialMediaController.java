@@ -12,6 +12,7 @@ import Exception.AccountAlreadyExistsException;
 import Exception.AccountDoesNotExistException;
 import Exception.InvalidMessageTextException;
 import Exception.InvalidNewAccountInputException;
+import Exception.MessageDoesNotExistException;
 import Model.Account;
 import Model.Message;
 import Service.SocialMediaService;
@@ -39,6 +40,7 @@ public class SocialMediaController {
         app.get("/messages", this::getAllMessagesHandler);
         app.get("/messages/{message_id}", this::getMessageById);
         app.delete("/messages/{message_id}", this::deleteMessageById);
+        app.patch("/messages/{message_id}", this::patchMessageByIdHandler);
         
         return app;
     }
@@ -173,4 +175,30 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * Updates a message's text in the database by using the message ID provided in the URL and the request body text in
+     *  the context.
+     * Returns thru the context, the updated Message in JSON, with ID, poster ID, message text, and time of posting.
+     * If the message text is empty or is too long, or if the message does not exist in the database, then a HTTP
+     *  response code of 400 is returned.
+     * 
+     * @param context Contains an ID from the URL path parameter and text from the request body.  Sends back the updated
+     *  Message in JSON.
+     */
+    private void patchMessageByIdHandler(Context context) {
+        int id = Integer.parseInt(
+            context.pathParam("message_id"));
+        String text = context.bodyAsClass(Message.class).getMessage_text();
+        
+        try {
+            Message updatedMessage = SOCIAL_MEDIA_SERVICE.updateMessage(id, text);
+            context.status(200);
+            context.json(updatedMessage);
+        } catch (InvalidMessageTextException | MessageDoesNotExistException e) {
+            context.status(400);
+        } catch (SQLException e) {
+            context.status(500);
+        }
+    }
+    
 }

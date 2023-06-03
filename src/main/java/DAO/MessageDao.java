@@ -41,4 +41,14 @@ public interface MessageDao {
      * @throws SQLException If there is an issue with the database.
      */
     void deleteMessage(int id) throws SQLException;
+
+    /**
+     * Updates a message's text in a database, belonging to the provided message ID.  If the message doesn't exist,
+     *  nothing happens.
+     * 
+     * @param id The message ID of the message to update.
+     * @param text The text that will replace the original message text.
+     * @throws SQLException If there is an issue with the database.
+     */
+    void updateMessage(int id, String text) throws SQLException;
 }

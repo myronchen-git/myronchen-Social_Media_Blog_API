@@ -13,6 +13,7 @@ import Exception.AccountAlreadyExistsException;
 import Exception.AccountDoesNotExistException;
 import Exception.InvalidMessageTextException;
 import Exception.InvalidNewAccountInputException;
+import Exception.MessageDoesNotExistException;
 import Model.Account;
 import Model.Message;
 
@@ -180,4 +181,48 @@ public class SocialMediaService {
 
         return retrievedMessage;
     }
+
+    /**
+     * Updates the message text belonging to the provided ID in the database.  The old message is retrieved from the
+     *  database before doing the update and is used as the return object.
+     * Returns a Message object representing the updated message in the database.
+     * Throws Exceptions if the message text is empty, if the message text is too long, or if message with provided ID
+     *  doesn't exist in the database.
+     * 
+     * @param id The message ID of the message to update.
+     * @param text The text that will replace the original message text.
+     * @return The Message object representing the updated message in the database.
+     * @throws InvalidMessageTextException If the new message's text is not acceptable.
+     * @throws MessageDoesNotExistException If the message with the provided ID does not exist.
+     * @throws SQLException If there is an issue with the database.
+     */
+    public Message updateMessage(int id, String text)
+     throws InvalidMessageTextException, MessageDoesNotExistException, SQLException {
+        LOGGER.info("Social media service is updating message text with ID: {}, with new text: {}", id, text);
+
+        if (text.isEmpty()
+         || text.length() >= 255) {
+            LOGGER.error("Message text is empty or too long: {}", text);
+            throw new InvalidMessageTextException(
+                String.format(
+                    "Can not update message with ID: %s.  Message text is empty or too long: %s.",
+                     id, text));
+        }
+
+        Message retrievedMessage = messageDao.getMessage(id)
+            .orElseThrow(
+                () -> {
+                    LOGGER.error("Message does not exist for ID: {}", id);
+                    return new MessageDoesNotExistException(
+                        String.format(
+                            "Can not update message with ID: %s.  Message does not exist.",
+                             id));
+                }
+            );
+
+        retrievedMessage.setMessage_text(text);
+
+        return retrievedMessage;
+    }
+
 }

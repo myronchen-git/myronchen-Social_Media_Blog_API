@@ -143,4 +143,26 @@ public class MessageDaoH2 implements MessageDao {
         }
     }
 
+    
+    @Override
+    public void updateMessage (int id, String text) throws SQLException {
+        LOGGER.info("Updating message with ID: {} from database, with text: {}", id, text);
+
+        String sql = "UPDATE message SET message_text = '?' WHERE message_id = ?;";
+
+        try {
+            PreparedStatement preparedStatement =
+             connection.prepareStatement(sql);
+            preparedStatement.setString(1, text);
+            preparedStatement.setInt(2, id);
+
+            int numMessagesUpdated = preparedStatement.executeUpdate();
+            LOGGER.debug("Number of messages updated in database: {}", numMessagesUpdated);
+
+        } catch (SQLException e) {
+            LOGGER.error("Database error when updating message with ID: {}", id);
+            throw e;
+        }
+    }
+
 }
