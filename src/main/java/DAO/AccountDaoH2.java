@@ -61,63 +61,74 @@ public class AccountDaoH2 implements AccountDao {
 
     @Override
     public Optional<Account> getAccount(String username) throws SQLException {
-        LOGGER.info("Retrieving an account from database with username: {}", username);
-
-        String sql = "SELECT * FROM account WHERE username = ?;";
-
-        try {
-            PreparedStatement preparedStatement =
-             connection.prepareStatement(sql);
-            preparedStatement.setString(1, username);
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                int retrievedAccountId = resultSet.getInt("account_id");
-                String retrievedUsername = resultSet.getString("username");
-                String retrievedPassword = resultSet.getString("password");
-
-                return Optional.of(
-                    new Account(retrievedAccountId, retrievedUsername, retrievedPassword));
-            }
-
-        } catch (SQLException e) {
-            LOGGER.error("Database error when getting account for username: {}", username);
-            throw e;
-        }
-
-        return Optional.empty();
+        return getAccountHelper("username", username, "username");
     }
 
 
     @Override
     public Optional<Account> getAccount(int accountId) throws SQLException {
-        LOGGER.info("Retrieving an account from database with account ID: {}", accountId);
+        return getAccountHelper("account ID", accountId, "account_id");
+    }
 
-        String sql = "SELECT * FROM account WHERE account_id = ?;";
 
-        try {
-            PreparedStatement preparedStatement =
-             connection.prepareStatement(sql);
-            preparedStatement.setInt(1, accountId);
+    /**
+     * Helper method used to store common code from the getAccount methods.
+     * 
+     * @param type Descriptive word(s) used in logging, comments, descriptions, etc.
+     * @param value The username or account ID that the getAccount method is supposed to look up.
+     * @param databaseTableColumnName The name of the column in the relevant table that is supposed to be used to filter
+     *  for the value.
+     * @return An Optional containing an Account object or an empty Optional if there is no account containing the
+     *  provided value.
+     * @throws SQLException If there is an issue with the database.
+     */
+    private Optional<Account> getAccountHelper(
+        String type, Object value, String databaseTableColumnName)
+         throws SQLException {
+            LOGGER.info("Retrieving an account from database with " + type + ": {}", value);
 
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                int retrievedAccountId = resultSet.getInt("account_id");
-                String retrievedUsername = resultSet.getString("username");
-                String retrievedPassword = resultSet.getString("password");
-
-                return Optional.of(
-                    new Account(retrievedAccountId, retrievedUsername, retrievedPassword));
+            if (!"username".equals(databaseTableColumnName) && !"account_id".equals(databaseTableColumnName)) {
+                LOGGER.error("Incorrect column name argument for getAccountHelper: {}", databaseTableColumnName);
+                throw new IllegalArgumentException(
+                    String.format(
+                        "Argument 'databaseTableColumnName' is not a recognized name.  " + 
+                         "'databaseTableColumnName': %s.", databaseTableColumnName));
             }
 
-        } catch (SQLException e) {
-            LOGGER.error("Database error when getting account for ID: {}", accountId);
-            throw e;
-        }
+            String sql = "SELECT * FROM account WHERE " + databaseTableColumnName + " = ?;";
 
-        return Optional.empty();
+            try {
+                PreparedStatement preparedStatement =
+                 connection.prepareStatement(sql);
+                
+                if (value instanceof String) {
+                    preparedStatement.setString(1, (String) value);
+                } else if (value instanceof Integer) {
+                    preparedStatement.setInt(1, (Integer) value);
+                } else {
+                    LOGGER.error("Incorrect value type for getAccountHelper: {}", value.getClass().getName());
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "The argument named 'value' is not a recognizable type. " + 
+                             "'value' type: %s.", value.getClass().getName()));
+                }
+
+                ResultSet resultSet = preparedStatement.executeQuery();
+    
+                if (resultSet.next()) {
+                    return Optional.of(
+                        new Account(
+                            resultSet.getInt("account_id"),
+                            resultSet.getString("username"),
+                            resultSet.getString("password")));
+                }
+
+            } catch (SQLException e) {
+                LOGGER.error("Database error when getting account for " + type + ": {}", value);
+                throw e;
+            }
+
+            return Optional.empty();
     }
 
 }
