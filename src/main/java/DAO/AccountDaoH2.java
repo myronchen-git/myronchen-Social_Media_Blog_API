@@ -91,15 +91,15 @@ public class AccountDaoH2 implements AccountDao {
 
 
     @Override
-    public Optional<Account> getAccount(int id) throws SQLException {
-        LOGGER.info("Retrieving an account from database with account ID: {}", id);
+    public Optional<Account> getAccount(int accountId) throws SQLException {
+        LOGGER.info("Retrieving an account from database with account ID: {}", accountId);
 
         String sql = "SELECT * FROM account WHERE account_id = ?;";
 
         try {
             PreparedStatement preparedStatement =
              connection.prepareStatement(sql);
-            preparedStatement.setInt(1, id);
+            preparedStatement.setInt(1, accountId);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -113,7 +113,7 @@ public class AccountDaoH2 implements AccountDao {
             }
 
         } catch (SQLException e) {
-            LOGGER.error("Database error when getting account for ID: {}", id);
+            LOGGER.error("Database error when getting account for ID: {}", accountId);
             throw e;
         }
 

@@ -127,15 +127,15 @@ public class MessageDaoH2 implements MessageDao {
 
 
     @Override
-    public Optional<Message> getMessage(int id) throws SQLException {
-        LOGGER.info("Getting message from database with ID: {}", id);
+    public Optional<Message> getMessage(int messageId) throws SQLException {
+        LOGGER.info("Getting message from database with ID: {}", messageId);
 
         String sql = "SELECT * FROM message WHERE message_id = ?;";
 
         try {
             PreparedStatement preparedStatement =
              connection.prepareStatement(sql);
-            preparedStatement.setInt(1, id);
+            preparedStatement.setInt(1, messageId);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -149,7 +149,7 @@ public class MessageDaoH2 implements MessageDao {
             }
 
         } catch (SQLException e) {
-            LOGGER.error("Database error when getting message for ID: {}", id);
+            LOGGER.error("Database error when getting message for ID: {}", messageId);
             throw e;
         }
 
@@ -158,43 +158,43 @@ public class MessageDaoH2 implements MessageDao {
 
 
     @Override
-    public void deleteMessage(int id) throws SQLException {
-        LOGGER.info("Deleting message from database with ID: {}", id);
+    public void deleteMessage(int messageId) throws SQLException {
+        LOGGER.info("Deleting message from database with ID: {}", messageId);
 
         String sql = "DELETE FROM message where message_id = ?;";
 
         try {
             PreparedStatement preparedStatement =
              connection.prepareStatement(sql);
-            preparedStatement.setInt(1, id);
+            preparedStatement.setInt(1, messageId);
 
             int numMessagesDeleted = preparedStatement.executeUpdate();
             LOGGER.debug("Number of messages deleted from database: {}", numMessagesDeleted);
 
         } catch (SQLException e) {
-            LOGGER.error("Database error when deleting message for ID: {}", id);
+            LOGGER.error("Database error when deleting message for ID: {}", messageId);
             throw e;
         }
     }
 
     
     @Override
-    public void updateMessage (int id, String text) throws SQLException {
-        LOGGER.info("Updating message with ID: {} from database, with text: {}", id, text);
+    public void updateMessage (int messageId, String messageText) throws SQLException {
+        LOGGER.info("Updating message with ID: {} from database, with text: {}", messageId, messageText);
 
         String sql = "UPDATE message SET message_text = '?' WHERE message_id = ?;";
 
         try {
             PreparedStatement preparedStatement =
              connection.prepareStatement(sql);
-            preparedStatement.setString(1, text);
-            preparedStatement.setInt(2, id);
+            preparedStatement.setString(1, messageText);
+            preparedStatement.setInt(2, messageId);
 
             int numMessagesUpdated = preparedStatement.executeUpdate();
             LOGGER.debug("Number of messages updated in database: {}", numMessagesUpdated);
 
         } catch (SQLException e) {
-            LOGGER.error("Database error when updating message with ID: {}", id);
+            LOGGER.error("Database error when updating message with ID: {}", messageId);
             throw e;
         }
     }

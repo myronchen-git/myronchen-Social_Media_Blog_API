@@ -162,11 +162,11 @@ public class SocialMediaController {
      * @param context Contains an ID from the URL path parameter.  Sends back a Message object in JSON.
      */
     private void getMessageByIdHandler(Context context) {
-        int id = Integer.parseInt(
+        int messageId = Integer.parseInt(
             context.pathParam("message_id"));
 
         try {
-            SOCIAL_MEDIA_SERVICE.getMessage(id)
+            SOCIAL_MEDIA_SERVICE.getMessage(messageId)
                 .ifPresent(
                     (retrievedMessage) -> context.json(retrievedMessage));
             context.status(200);
@@ -184,11 +184,11 @@ public class SocialMediaController {
      * @param context Contains an ID from the URL path parameter.  Sends back the deleted Message in JSON.
      */
     private void deleteMessageByIdHandler(Context context) {
-        int id = Integer.parseInt(
+        int messageId = Integer.parseInt(
             context.pathParam("message_id"));
 
         try {
-            SOCIAL_MEDIA_SERVICE.deleteMessage(id)
+            SOCIAL_MEDIA_SERVICE.deleteMessage(messageId)
                 .ifPresent(
                     (deletedMessage) -> context.json(deletedMessage));
             context.status(200);
@@ -208,12 +208,12 @@ public class SocialMediaController {
      *  Message in JSON.
      */
     private void patchMessageByIdHandler(Context context) {
-        int id = Integer.parseInt(
+        int messageId = Integer.parseInt(
             context.pathParam("message_id"));
-        String text = context.bodyAsClass(Message.class).getMessage_text();
+        String messageText = context.bodyAsClass(Message.class).getMessage_text();
         
         try {
-            Message updatedMessage = SOCIAL_MEDIA_SERVICE.updateMessage(id, text);
+            Message updatedMessage = SOCIAL_MEDIA_SERVICE.updateMessage(messageId, messageText);
             context.status(200);
             context.json(updatedMessage);
         } catch (InvalidMessageTextException | MessageDoesNotExistException e) {

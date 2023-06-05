@@ -165,14 +165,14 @@ public class SocialMediaService {
     /**
      * Gets a message from the database by using message ID.  If the message does not exist, return an empty Optional.
      * 
-     * @param id The message ID of the message to retrieve.
+     * @param messageId The message ID of the message to retrieve.
      * @return An Optional containing the Message object with ID, poster ID, message text, and time of posting.
      * @throws SQLException If there is an issue with the database.
      */
-    public Optional<Message> getMessage(int id) throws SQLException {
-        LOGGER.info("Social media service is getting message with ID: {}", id);
+    public Optional<Message> getMessage(int messageId) throws SQLException {
+        LOGGER.info("Social media service is getting message with ID: {}", messageId);
 
-        return messageDao.getMessage(id);
+        return messageDao.getMessage(messageId);
     }
 
     /**
@@ -181,17 +181,17 @@ public class SocialMediaService {
      * If the message does not exist, the delete operation in the database is not performed, and an empty Optional is
      *  returned.
      * 
-     * @param id The message ID of the message to delete.
+     * @param messageId The message ID of the message to delete.
      * @return An Optional containing the Message object/record that was deleted.
      * @throws SQLException If there is an issue with the database.
      */
-    public Optional<Message> deleteMessage(int id) throws SQLException {
-        LOGGER.info("Social media service is deleting message with ID: {}", id);
+    public Optional<Message> deleteMessage(int messageId) throws SQLException {
+        LOGGER.info("Social media service is deleting message with ID: {}", messageId);
 
-        Optional<Message> retrievedMessage = messageDao.getMessage(id);
+        Optional<Message> retrievedMessage = messageDao.getMessage(messageId);
 
         if (retrievedMessage.isPresent()) {
-            messageDao.deleteMessage(id);
+            messageDao.deleteMessage(messageId);
         }
 
         return retrievedMessage;
@@ -204,38 +204,39 @@ public class SocialMediaService {
      * Throws Exceptions if the message text is empty, if the message text is too long, or if message with provided ID
      *  doesn't exist in the database.
      * 
-     * @param id The message ID of the message to update.
-     * @param text The text that will replace the original message text.
+     * @param messageId The message ID of the message to update.
+     * @param messageText The text that will replace the original message text.
      * @return The Message object representing the updated message in the database.
      * @throws InvalidMessageTextException If the new message's text is not acceptable.
      * @throws MessageDoesNotExistException If the message with the provided ID does not exist.
      * @throws SQLException If there is an issue with the database.
      */
-    public Message updateMessage(int id, String text)
+    public Message updateMessage(int messageId, String messageText)
      throws InvalidMessageTextException, MessageDoesNotExistException, SQLException {
-        LOGGER.info("Social media service is updating message text with ID: {}, with new text: {}", id, text);
+        LOGGER.info("Social media service is updating message with ID: {}, with new text: {}",
+         messageId, messageText);
 
-        if (text.isEmpty()
-         || text.length() >= 255) {
-            LOGGER.error("Message text is empty or too long: {}", text);
+        if (messageText.isEmpty()
+         || messageText.length() >= 255) {
+            LOGGER.error("Message text is empty or too long: {}", messageText);
             throw new InvalidMessageTextException(
                 String.format(
                     "Can not update message with ID: %s.  Message text is empty or too long: %s.",
-                     id, text));
+                     messageId, messageText));
         }
 
-        Message retrievedMessage = messageDao.getMessage(id)
+        Message retrievedMessage = messageDao.getMessage(messageId)
             .orElseThrow(
                 () -> {
-                    LOGGER.error("Message does not exist for ID: {}", id);
+                    LOGGER.error("Message does not exist for ID: {}", messageId);
                     return new MessageDoesNotExistException(
                         String.format(
                             "Can not update message with ID: %s.  Message does not exist.",
-                             id));
+                             messageId));
                 }
             );
 
-        retrievedMessage.setMessage_text(text);
+        retrievedMessage.setMessage_text(messageText);
 
         return retrievedMessage;
     }

@@ -29,10 +29,10 @@ public interface AccountDao {
     /**
      * Retrieves an account from a database by using ID.
      * 
-     * @param id The ID to use to look up an account in the database.
+     * @param accountId The ID to use to look up an account in the database.
      * @return An Optional containing an Account object or an empty Optional if there is no account with the provided
      *  ID in the database.
      * @throws SQLException If there is an issue with the database.
      */
-    Optional<Account> getAccount(int id) throws SQLException;
+    Optional<Account> getAccount(int accountId) throws SQLException;
 }

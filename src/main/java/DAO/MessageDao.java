@@ -38,27 +38,27 @@ public interface MessageDao {
     /**
      * Gets a message from a database by using message ID.  If the message does not exist, return an empty Optional.
      * 
-     * @param id The message ID of the message to retrieve.
+     * @param messageId The message ID of the message to retrieve.
      * @return A Message object with ID, poster ID, message text, and time of posting.
      * @throws SQLException If there is an issue with the database.
      */
-    Optional<Message> getMessage(int id) throws SQLException;
+    Optional<Message> getMessage(int messageId) throws SQLException;
 
     /**
      * Deletes a message from a database by using message ID.  If the message doesn't exist, nothing happens.
      * 
-     * @param id The message ID of the message to delete.
+     * @param messageId The message ID of the message to delete.
      * @throws SQLException If there is an issue with the database.
      */
-    void deleteMessage(int id) throws SQLException;
+    void deleteMessage(int messageId) throws SQLException;
 
     /**
      * Updates a message's text in a database, belonging to the provided message ID.  If the message doesn't exist,
      *  nothing happens.
      * 
-     * @param id The message ID of the message to update.
-     * @param text The text that will replace the original message text.
+     * @param messageId The message ID of the message to update.
+     * @param messageText The text that will replace the original message text.
      * @throws SQLException If there is an issue with the database.
      */
-    void updateMessage(int id, String text) throws SQLException;
+    void updateMessage(int messageId, String messageText) throws SQLException;
 }
